@@ -1,0 +1,90 @@
+import random
+
+# S&P 500 için cümleler
+sp_negatif = [
+    "S&P 500 endeksi dün % -3.31 düşüş gösterdi.",
+    "Dünkü işlem gününde S&P 500 endeksi % -3.31 değer kaybetti.",
+    "S&P 500 endeksi, dün % -3.31 oranında azaldı."
+]
+
+sp_pozitif = [
+    "S&P 500 endeksi dün % 3.31 artış gösterdi.",
+    "Dünkü işlem gününde S&P 500 endeksi % 3.31 değer kazandı.",
+    "S&P 500 endeksi, dün % 3.31 oranında yükseldi."
+]
+
+sp_notr = [
+    "S&P 500 endeksi dün önemli bir değişiklik göstermedi.",
+    "Dünkü işlem gününde S&P 500 endeksi sabit kaldı.",
+    "S&P 500 endeksi, dün kayda değer bir hareket yapmadı."
+]
+
+# EUR/USD için cümleler
+eurusd_negatif = [
+    "EUR/USD döviz kuru dün % -1.48 düşüş gösterdi.",
+    "Dünkü işlem gününde EUR/USD kuru % -1.48 değer kaybetti.",
+    "EUR/USD kuru, dün % -1.48 oranında azaldı."
+]
+
+eurusd_pozitif = [
+    "EUR/USD döviz kuru dün % 1.48 artış gösterdi.",
+    "Dünkü işlem gününde EUR/USD kuru % 1.48 değer kazandı.",
+    "EUR/USD kuru, dün % 1.48 oranında yükseldi."
+]
+
+eurusd_notr = [
+    "EUR/USD döviz kuru dün önemli bir değişiklik göstermedi.",
+    "Dünkü işlem gününde EUR/USD kuru sabit kaldı.",
+    "EUR/USD kuru, dün kayda değer bir hareket yapmadı."
+]
+
+# Ons Altın için cümleler
+ons_negatif = [
+    "Ons altın fiyatı dün % -0.04 düşüş gösterdi.",
+    "Dünkü işlem gününde ons altın % -0.04 değer kaybetti.",
+    "Ons altın, dün % -0.04 oranında azaldı."
+]
+
+ons_pozitif = [
+    "Ons altın fiyatı dün % 0.04 artış gösterdi.",
+    "Dünkü işlem gününde ons altın % 0.04 değer kazandı.",
+    "Ons altın, dün % 0.04 oranında yükseldi."
+]
+
+ons_notr = [
+    "Ons altın fiyatı dün önemli bir değişiklik göstermedi.",
+    "Dünkü işlem gününde ons altın sabit kaldı.",
+    "Ons altın, dün kayda değer bir hareket yapmadı."
+]
+
+def com_sentence(sp_yesterday, eurusd_yesterday, ons_yesterday):
+    sentences = []
+    
+    # S&P 500 için cümle seçimi
+    if abs(sp_yesterday) < 0.05:
+        sentences.append(random.choice(sp_notr))
+    elif sp_yesterday > 0:
+        sentences.append(random.choice(sp_pozitif))
+    else:
+        sentences.append(random.choice(sp_negatif))
+    
+    # EUR/USD için cümle seçimi
+    if abs(eurusd_yesterday) < 0.05:
+        sentences.append(random.choice(eurusd_notr))
+    elif eurusd_yesterday > 0:
+        sentences.append(random.choice(eurusd_pozitif))
+    else:
+        sentences.append(random.choice(eurusd_negatif))
+    
+    # Ons Altın için cümle seçimi
+    if abs(ons_yesterday) < 0.05:
+        sentences.append(random.choice(ons_notr))
+    elif ons_yesterday > 0:
+        sentences.append(random.choice(ons_pozitif))
+    else:
+        sentences.append(random.choice(ons_negatif))
+    
+    return sentences
+
+# Örnek kullanım:
+print(com_sentence(-3.31, 1.48, 0.04))
