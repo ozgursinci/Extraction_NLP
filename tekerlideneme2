@@ -1,0 +1,64 @@
+import pandas as pd
+import numpy as np
+
+# Veri ve cümle kalıpları
+data = {
+    "ay": ["Haziran", "Haziran", "Haziran", "Haziran"],
+    "indicator": ["Aylık manşet TÜFE", "Yıllık manşet TÜFE", "Aylık çekirdek TÜFE", "Yıllık çekirdek TÜFE"],
+    "indicator2": ["Aylık manşet TÜFE'nin", "Yıllık manşet TÜFE'nin", "Aylık çekirdek TÜFE'nin", "Yıllık çekirdek TÜFE'nin"],
+    "aciklanan": ["%0.1", "%5.1", "%0.4", "%4.5"],
+    "beklenti": ["%0.2", "%5.1", "%0.2", "%4.5"],
+    "sehir": ["Amerika", "Amerika", "Amerika", "Amerika"],
+    "fark": [-0.1, 0.0, 0.2, 0.0],
+    "tarih": ["Wednesday July 24 2024"]*4
+}
+
+df = pd.DataFrame(data)
+
+# Cümleler
+sentence_templates = {
+    'under': [
+        "{ay} ayı içerisinde yapılan açıklamaya göre, {sehir} {indicator} değeri beklenen {beklenti} seviyesine ulaşamayarak {aciklanan} olarak gerçekleşti.",
+        "{ay} ayında, {sehir} {indicator} için belirlenen {beklenti} beklentisi {aciklanan} ile karşılanamadı.",
+        "{sehir}'deki {ay} ayı {indicator} ölçümü, {beklenti} beklentisini {aciklanan} ile aşağı çekti."
+    ],
+    'equal': [
+        "{ay} ayında, {sehir} {indicator} değeri için piyasa beklentisi olan {beklenti}, tam olarak {aciklanan} ile örtüştü.",
+        "{ay} ayı {sehir} {indicator} rakamları, {beklenti} ile tam bir uyum içinde {aciklanan} olarak açıklandı.",
+        "{sehir} ekonomisinde {ay} ayı {indicator}, beklenen {beklenti} değerine eksiksiz ulaştı."
+    ],
+    'over': [
+        "Dün açıklanan {ay} ayı, {sehir} {indicator} beklentisi {beklenti} iken gerçekleşen {aciklanan} değeri, beklentileri aştı.",
+        "{ay} ayında {sehir}'de {indicator}, {beklenti} beklentilerini {aciklanan} ile geride bıraktı.",
+        "{sehir}'de {ay} ayı için belirlenen {indicator} beklentisi {beklenti}, {aciklanan} ile aşıldı."
+    ]
+}
+
+# Hangi cümlelerin kullanıldığını izlemek için dictionary
+used_sentences = {key: [] for key in sentence_templates.keys()}
+
+def create_sentence(row):
+    if row['fark'] < 0:
+        category = 'under'
+    elif row['fark'] > 0:
+        category = 'over'
+    else:
+        category = 'equal'
+    
+    available_sentences = [s for s in sentence_templates[category] if s not in used_sentences[category]]
+    
+    if not available_sentences:
+        # Tüm cümleler kullanıldıysa, listeyi sıfırlayın
+        used_sentences[category] = []
+        available_sentences = sentence_templates[category]
+        
+    # Rastgele bir cümle seçin
+    chosen_sentence = np.random.choice(available_sentences)
+    used_sentences[category].append(chosen_sentence)
+    
+    indicator_choice = np.random.choice([row['indicator'], row['indicator2']], p=[0.5, 0.5])
+    return chosen_sentence.format(ay=row['ay'], sehir=row['sehir'], indicator=indicator_choice, beklenti=row['beklenti'], aciklanan=row['aciklanan'])
+
+# DataFrame üzerinde işlem yapın
+df['sentence'] = df.apply(create_sentence, axis=1)
+print(df[['ay', 'sentence']])
