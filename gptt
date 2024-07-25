@@ -1,0 +1,40 @@
+elime bazı kelimeler var ben bu kelimelerden türkçe cümleler oluşturmak istiyorum fakat her seferinde bunlardan aynı cümlelerin oluşmasıunı istemiyorum. Bir çok farklı cümle kombinasyonu da olacak
+
+keys dataframemim buna benzer birşeydir fakat daha fazla veri içerir:
+keys = 
+	ay,	indicator,	indicator2,	aciklanan,	beklenti,	sehir,	fark,	tarih
+Haziran,	Aylık manşet TÜFE,	Aylık manşet TÜFE'nin,	%0.1,	%0.2,	Amerika,	-0.1,	Wednesday July 24 2024
+Haziran,	Yıllık manşet TÜFE,	Yıllık manşet TÜFE'nin,	%5.1,	%5.1,	Amerika,	0.0,	Wednesday July 24 2024
+Haziran,	Aylık çekirdek TÜFE,	Aylık çekirdek TÜFE'nin,	%0.4,	%0.2,	Amerika,	0.2,	Wednesday July 24 2024
+Haziran,	Yıllık çekirdek TÜFE,	Yıllık çekirdek TÜFE'nin,	%4.5,	%4.5,	Amerika	0.0,	Wednesday July 24 2024
+
+
+indicator2, indocatorun ek almış halidir. %50 ihtimalle indikator için %50 ihtimalle indicator2 için bir cümle oluşturulsun
+buradan üretilecek çıktı 3 farklı senaryoya ayrılıyor (farkın negatif olması, farkın pozitif olması, farkın sıfır olması.) fark negatif ise beklentinin altında bir değer açıklanmıştır.
+
+mesela:
+Beklentinin altındaki durumlar için:
+{ay} ayı içerisinde yapılan açıklamaya göre, {indicator} değeri beklenen {forecast} seviyesine ulaşamayarak {actual} olarak gerçekleşti.
+
+
+Beklentinin üstündeki durumlar için
+Dün açıklanan {ay} ayı, piyasa beklentisi {forecast} iken gerçekleşen {actual} değeri, beklentileri aştı.
+
+
+Beklentinin eşit olduğu durumlar için
+{ay} ayında, {indicator} değeri için piyasa beklentisi olan {forecast}, tam olarak gerçekleşen {actual} ile örtüştü.
+
+bunlar sadece örnek cümlelerdir bunlardan en az 3 er tanedaha üret exstra yorumlar ekleme.
+
+
+elimde başka veriler de var bunlar günlük değişim verileridir. Bu veriler yukarıdaki cümlelerin peşinden gelecek birer cümle oluşturacak. 0.05ten küçük ve -0.05ten büyük değerler kayda değer değişmler değildirler bu değerlerde kurulacak cümleler olacak. Bunların da bir çok kombinasyonu var.
+
+sp_yesterday = -3. 31
+eurusd_yesterday = 1.48
+ons_yesterday = 0.04
+
+
+
+keys df indeki beklenti açıklanandan büyük olduğunda biz sp_yesterday, eurusd_yesterda ve ons_yesterday verilerinin yükselmesini bekliyoruz ona göre bir cümle kurmanı istiyorum. Mesela beklenildiği gibi değilse kurulacak cümleye 'rağmen', 'e rağmen' gibi kelimeler gelsin. kayda değer bir değişim yoksa kayda değer bir değişim olmadı gibi cümleler kurulsun. bu cümle sp_yesterday, eurusd_yesterda ve ons_yesterday verilerinin  değerlerini de içersin. kodumu pythonda yazdığım için süslü parantez içerisinde yazabilirsin.
+
+sonuç olarak bana öyle bir python kodu ver ki bana her seferinde farklı olacak cümleler kursun. benim dfim bir çok satır içeriyor bu yüzden sürekli aynı cümlelerin dömemesi önemli. Bazı kelimelerin alternatifleri de rasgele bir şekilde gelsin istiyorum. %50 'rağmen', % 50 'e rağmen' gibi. bana bu cümleleri oluşturacak python kodlarını atar mısın? Bu cümleler sadece bilgi içersin ekstra birşey ekleme.
