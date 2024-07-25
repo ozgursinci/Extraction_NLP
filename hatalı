@@ -1,0 +1,99 @@
+import pandas as pd
+import random
+
+keys_df = pd.DataFrame({
+    'ay': ['Ocak', 'Şubat', 'Mart'],
+    'indicator': ['enflasyon', 'işsizlik oranı', 'GSYİH'],
+    'indicator2': ['büyüme oranı', 'sanayi üretimi', 'perakende satışlar'],
+    'beklenti': [2.5, 5.0, 3.2],
+    'aciklanan': [2.3, 5.1, 3.0],
+    'fark': [-0.2, 0.1, -0.2]
+})
+
+# Günlük değişim değerleri
+sp_yesterday = -3.31
+eurusd_yesterday = 1.48
+ons_yesterday = 0.04
+
+# Cümle şablonları
+below_expectation_sentences = [
+    "{ay} ayı içerisinde yapılan açıklamaya göre, {indicator} değeri beklenen {forecast} seviyesine ulaşamayarak {actual} olarak gerçekleşti.",
+    "{ay} ayındaki {indicator2} değeri, beklenen {forecast} seviyesine ulaşamayarak {actual} olarak açıklandı.",
+    "{ay} ayında açıklanan {indicator2}, piyasa beklentisi olan {forecast}'e ulaşamadı ve {actual} olarak kaydedildi.",
+    "{ay} ayında {indicator}, beklenen {forecast} değerinin altında kalarak {actual} olarak gerçekleşti.",
+    "{ay} ayı verilerine göre {indicator2}, beklenen {forecast} seviyesine ulaşamadı ve {actual} olarak açıklandı."
+]
+
+above_expectation_sentences = [
+    "Dün açıklanan {ay} ayı, piyasa beklentisi {forecast} iken gerçekleşen {actual} değeri, beklentileri aştı.",
+    "{ay} ayındaki {indicator}, piyasa beklentisi olan {forecast}'in üzerinde {actual} olarak açıklandı.",
+    "{ay} ayında açıklanan {indicator}, beklentilerin üzerinde gerçekleşerek {actual} olarak kaydedildi.",
+    "{ay} ayı için {indicator2}, beklenen {forecast} değerinin üzerinde {actual} olarak gerçekleşti.",
+    "{ay} ayındaki {indicator2}, beklentileri aşarak {actual} olarak kaydedildi."
+]
+
+equal_expectation_sentences = [
+    "{ay} ayında, {indicator} değeri için piyasa beklentisi olan {forecast}, tam olarak gerçekleşen {actual} ile örtüştü.",
+    "{ay} ayı için açıklanan {indicator2}, piyasa beklentisi olan {forecast} ile aynı seviyede {actual} olarak gerçekleşti.",
+    "{ay} ayındaki {indicator}, beklentilerle uyumlu bir şekilde {actual} olarak açıklandı.",
+    "{ay} ayı verileri, {indicator2} için beklenen {forecast} değeri ile tam olarak aynı seviyede {actual} olarak kaydedildi.",
+    "{ay} ayında {indicator}, beklenen {forecast} seviyesine tam olarak ulaşarak {actual} olarak açıklandı."
+]
+
+# Günlük değişim cümleleri
+no_significant_change_sentences = [
+    "S&P 500 dün {sp} değer kaybetti, EUR/USD {eurusd} yükseldi ve ons altın {ons} değişti.",
+    "S&P 500 dün {sp} düşerken, EUR/USD {eurusd} arttı ve ons altın {ons} değişiklik gösterdi.",
+    "S&P 500 {sp} değer kaybederken, EUR/USD {eurusd} yükseldi ve ons altın {ons} seviyesini korudu.",
+    "Dün, S&P 500 {sp} düşüş gösterdi, EUR/USD {eurusd} yükseldi ve ons altın {ons} değişiklik göstermedi.",
+    "S&P 500 {sp} değer kaybı yaşarken, EUR/USD {eurusd} yükseldi ve ons altın {ons} seviyesinde sabit kaldı."
+]
+
+significant_change_sentences = [
+    "Beklentilere rağmen S&P 500 dün {sp} değer kazandı, EUR/USD {eurusd} düşüş gösterdi ve ons altın {ons} arttı.",
+    "Piyasa beklentilerini karşılamamasına rağmen, S&P 500 {sp} yükseldi, EUR/USD {eurusd} düştü ve ons altın {ons} artış gösterdi.",
+    "S&P 500 {sp} artarken, EUR/USD {eurusd} değer kaybetti ve ons altın {ons} seviyesine yükseldi.",
+    "S&P 500 {sp} yükseliş yaşarken, EUR/USD {eurusd} düşüş kaydetti ve ons altın {ons} arttı.",
+    "Piyasa beklentilerinin aksine, S&P 500 {sp} artarken EUR/USD {eurusd} düştü ve ons altın {ons} yükseldi."
+]
+
+# Cümle oluşturma fonksiyonu
+def generate_sentence(row):
+    if row['fark'] < 0:
+        sentence = random.choice(below_expectation_sentences)
+    elif row['fark'] > 0:
+        sentence = random.choice(above_expectation_sentences)
+    else:
+        sentence = random.choice(equal_expectation_sentences)
+    
+    # Günlük değişim cümlesi seçimi
+    if abs(sp_yesterday) < 0.05 and abs(eurusd_yesterday) < 0.05 and abs(ons_yesterday) < 0.05:
+        daily_sentence = random.choice(no_significant_change_sentences)
+    else:
+        daily_sentence = random.choice(significant_change_sentences)
+    
+    actual_indicator = random.choice([row['indicator'], row['indicator2']])
+
+    sentence = sentence.format(
+        ay=row['ay'],
+        indicator=actual_indicator,
+        indicator2=row['indicator2'],
+        forecast=row['beklenti'],
+        actual=row['aciklanan']
+    )
+    
+    daily_sentence = daily_sentence.format(
+        sp=sp_yesterday,
+        eurusd=eurusd_yesterday,
+        ons=ons_yesterday
+    )
+    
+    return sentence + " " + daily_sentence
+
+# Veri çerçevesi üzerinden cümleler oluşturma
+keys_df['generated_sentence'] = keys_df.apply(generate_sentence, axis=1)
+
+# Sonuçları göster
+for sentence in keys_df['generated_sentence']:
+    print(sentence)
+    print('--------------------------------------------------------------------------')
