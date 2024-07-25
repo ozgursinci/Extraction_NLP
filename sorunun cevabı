@@ -1,0 +1,41 @@
+import random
+
+def com_sentences(value, name):
+    # Placeholder replacement with actual value
+    negatif = [
+        f"{name} endeksi dün %{value} düşüş gösterdi.",
+        f"Dünkü işlem gününde {name} endeksi %{value} değer kaybetti.",
+        f"{name} endeksi, dün %{value} oranında azaldı."
+    ]
+
+    pozitif = [
+        f"{name} endeksi dün %{value} artış gösterdi.",
+        f"Dünkü işlem gününde {name} endeksi %{value} değer kazandı.",
+        f"{name} endeksi, dün %{value} oranında yükseldi."
+    ]
+
+    notr = [
+        f"{name} endeksi dün önemli bir değişiklik göstermedi.",
+        f"Dünkü işlem gününde {name} endeksi sabit kaldı.",
+        f"{name} endeksi, dün kayda değer bir hareket yapmadı."
+    ]
+
+    # Choosing a random sentence based on value
+    if abs(value) < 0.05:  # No significant change
+        return random.choice(notr)
+    elif value < 0:  # Negative change
+        return random.choice(negatif)
+    else:  # Positive change
+        return random.choice(pozitif)
+
+# Example usage:
+change_list = {
+    'NASDAQ': (-0.07, 'NASDAQ'),  # Example stock index changes
+    'S&P 500': (0.1, 'S&P 500'),
+    'Dow Jones': (0.01, 'Dow Jones')
+}
+
+for endeks, info in change_list.items():
+    value, name = info
+    sentence = com_sentences(value, name)
+    print(sentence)
