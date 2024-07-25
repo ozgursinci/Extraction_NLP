@@ -1,0 +1,50 @@
+import random
+
+class RandomSentenceGenerator:
+    def __init__(self):
+        self.last_used = {'negatif': None, 'pozitif': None, 'notr': None}
+
+    def com_sentences(self, value, name):
+        negatif = [
+            f"{name} endeksi dün %{value:.2f} düşüş gösterdi.",
+            f"Dünkü işlem gününde {name} endeksi %{value:.2f} değer kaybetti.",
+            f"{name} endeksi, dün %{value:.2f} oranında azaldı."
+        ]
+
+        pozitif = [
+            f"{name} endeksi dün %{value:.2f} artış gösterdi.",
+            f"Dünkü işlem gününde {name} endeksi %{value:.2f} değer kazandı.",
+            f"{name} endeksi, dün %{value:.2f} oranında yükseldi."
+        ]
+
+        notr = [
+            f"{name} endeksi dün önemli bir değişiklik göstermedi.",
+            f"Dünkü işlem gününde {name} endeksi sabit kaldı.",
+            f"{name} endeksi, dün kayda değer bir hareket yapmadı."
+        ]
+
+        category = 'notr' if abs(value) < 0.05 else 'negatif' if value < 0 else 'pozitif'
+        sentences = locals()[category]
+
+        # Exclude the last used sentence of the same category
+        available_sentences = [sentence for sentence in sentences if sentence != self.last_used[category]]
+        if not available_sentences:  # if all are excluded, reset to full list
+            available_sentences = sentences
+
+        chosen_sentence = random.choice(available_sentences)
+        self.last_used[category] = chosen_sentence  # Update the last used sentence
+
+        return chosen_sentence
+
+# Example usage:
+change_list = {
+    'NASDAQ': (-0.07, 'NASDAQ'),
+    'S&P 500': (0.1, 'S&P 500'),
+    'Dow Jones': (0.01, 'Dow Jones')
+}
+
+generator = RandomSentenceGenerator()
+for endeks, info in change_list.items():
+    value, name = info
+    sentence = generator.com_sentences(value, name)
+    print(sentence)
