@@ -1,0 +1,42 @@
+import pandas as pd
+import numpy as np
+
+# Veri çerçevesini oluşturma
+data = {
+    'ay': ['Haziran', 'Haziran', 'Haziran', 'Haziran'],
+    'indicator': ['Aylık manşet TÜFE', 'Yıllık manşet TÜFE', 'Aylık çekirdek TÜFE', 'Yıllık çekirdek TÜFE'],
+    'indicator2': ["Aylık manşet TÜFE'nin", "Yıllık manşet TÜFE'nin", "Aylık çekirdek TÜFE'nin", "Yıllık çekirdek TÜFE'nin"],
+    'aciklanan': ['%0.1', '%5.1', '%0.4', '%4.5'],
+    'beklenti': ['%0.2', '%5.1', '%0.2', '%4.5'],
+    'sehir': ['Amerika', 'Amerika', 'Amerika', 'Amerika'],
+    'fark': [-0.1, 0.0, 0.2, 0.0],
+    'tarih': ['Wednesday July 24 2024'] * 4
+}
+
+keys_df = pd.DataFrame(data)
+
+# Dünkü değerleri temsil eden değişkenler
+sp_yesterday = -0.31
+eurusd_yesterday = 1.48
+ons_yesterday = 0.04
+
+def create_sentence(row, sp, eurusd, ons):
+    if row['fark'] < 0:
+        sentence = f"{row['ay']} ayı içerisinde yapılan açıklamaya göre, {np.random.choice([row['indicator'], row['indicator2']])} değeri beklenen {row['beklenti']} seviyesine ulaşamayarak {row['aciklanan']} olarak gerçekleşti."
+    elif row['fark'] > 0:
+        sentence = f"Dün açıklanan {row['ay']} ayı, piyasa beklentisi {row['beklenti']} iken gerçekleşen {row['aciklanan']} değeri, beklentileri aştı."
+    else:
+        sentence = f"{row['ay']} ayında, {np.random.choice([row['indicator'], row['indicator2']])} değeri için piyasa beklentisi olan {row['beklenti']}, tam olarak gerçekleşen {row['aciklanan']} ile örtüştü."
+
+    # Ekonomik göstergeler üzerine ekstra cümleler
+    sp_text = "SP endeksinde kayda değer bir değişim yok." if abs(sp) < 0.05 else f"SP endeksi dünkü seviyelerden {'arttı' if sp > 0 else 'azaldı'}: {sp}"
+    eurusd_text = "EUR/USD kuru sabit kaldı." if abs(eurusd) < 0.05 else f"EUR/USD kurundaki değişim: {eurusd}"
+    ons_text = "Altın fiyatlarında kayda değer bir değişim yok." if abs(ons) < 0.05 else f"Altın fiyatlarındaki değişim: {ons}"
+    transition = np.random.choice(['rağmen', 'e rağmen'])
+    
+    extra_comment = f" Beklenenin {transition}, {sp_text}, {eurusd_text}, {ons_text}"
+    
+    return sentence + extra_comment
+
+# DataFrame üzerinden her bir satır için cümleleri oluşturma
+keys_df.apply(lambda row: create_sentence(row, sp_yesterday, eurusd_yesterday, ons_yesterday), axis=1)
